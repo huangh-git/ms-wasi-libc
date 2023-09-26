@@ -15,8 +15,8 @@
 static struct fl
 {
 	struct fl *next;
-	void (*f[COUNT])(void *);
-	void *a[COUNT];
+	void (*f[COUNT])(void (*)(void)); // the param is function pointer
+	void (*a[COUNT])(void);
 } builtin, *head;
 
 static int slot;
@@ -28,7 +28,8 @@ volatile int *const __atexit_lockptr = lock;
 
 void __funcs_on_exit()
 {
-	void (*func)(void *), *arg;
+	void (*func)(void (*)(void));
+	void (*arg)(void);
 	LOCK(lock);
 	for (; head; head=head->next, slot=COUNT) while(slot-->0) {
 		func = head->f[slot];
@@ -43,7 +44,7 @@ void __cxa_finalize(void *dso)
 {
 }
 
-int __cxa_atexit(void (*func)(void *), void *arg, void *dso)
+int __cxa_atexit(void (*func)(void (*)(void)), void (*arg)(void), void *dso)
 {
 	LOCK(lock);
 
@@ -71,12 +72,12 @@ int __cxa_atexit(void (*func)(void *), void *arg, void *dso)
 	return 0;
 }
 
-static void call(void *p)
+static void call(void (*p)(void))
 {
-	((void (*)(void))(uintptr_t)p)();
+	((void (*)(void))p)();
 }
 
 int atexit(void (*func)(void))
 {
-	return __cxa_atexit(call, (void *)(uintptr_t)func, 0);
+	return __cxa_atexit(call, func, 0);
 }
