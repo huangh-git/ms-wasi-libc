@@ -174,7 +174,7 @@ int clearenv(void);
 #define WIFCONTINUED(s) ((s) == 0xffff)
 void *reallocarray (void *, size_t, size_t);
 // void qsort_r (void *, size_t, size_t, int (*)(const void *, const void *, void *), void *);
-void qsort_r (void *, size_t, size_t, int (*)(const void *, const void *, void *), int (*)(const void *, const void *));
+void qsort_r (void *, size_t, size_t, int (*)(const void *, const void *, int (*)(const void *, const void *)), int (*)(const void *, const void *));
 #endif
 #endif
 

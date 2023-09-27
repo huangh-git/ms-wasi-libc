@@ -32,7 +32,7 @@
 #include "atomic.h"
 #define ntz(x) a_ctz_l((x))
 
-typedef int (*cmpfun)(const void *, const void *, void *);
+typedef int (*cmpfun)(const void *, const void *, int (*)(const void *, const void *));
 
 static inline int pntz(size_t p[2]) {
 	int r = ntz(p[0] - 1);
@@ -89,7 +89,7 @@ static inline void shr(size_t p[2], int n)
 	p[1] >>= n;
 }
 
-static void sift(unsigned char *head, size_t width, cmpfun cmp, void *arg, int pshift, size_t lp[])
+static void sift(unsigned char *head, size_t width, cmpfun cmp, int (*arg)(const void *, const void *), int pshift, size_t lp[])
 {
 	unsigned char *rt, *lf;
 	unsigned char *ar[14 * sizeof(size_t) + 1];
@@ -116,7 +116,7 @@ static void sift(unsigned char *head, size_t width, cmpfun cmp, void *arg, int p
 	cycle(width, ar, i);
 }
 
-static void trinkle(unsigned char *head, size_t width, cmpfun cmp, void *arg, size_t pp[2], int pshift, int trusty, size_t lp[])
+static void trinkle(unsigned char *head, size_t width, cmpfun cmp, int (*arg)(const void *, const void *), size_t pp[2], int pshift, int trusty, size_t lp[])
 {
 	unsigned char *stepson,
 	              *rt, *lf;
