@@ -4829,7 +4829,7 @@ void* dlcalloc(size_t n_elements, size_t elem_size) {
       req = MAX_SIZE_T; /* force downstream failure on overflow */
   }
   mem = dlmalloc(req);
-  if (mem != 0 && calloc_must_clear(mem2chunk(mem)))
+  if (mem != 0)
     memset(mem, 0, req);
   return mem;
 }
